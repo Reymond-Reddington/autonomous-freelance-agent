@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  agent:
+    build: .
+    container_name: autonomous-agent
+    restart: unless-stopped
+    environment:
+      - TELEGRAM_API_ID=${TELEGRAM_API_ID}
+      - TELEGRAM_API_HASH=${TELEGRAM_API_HASH}
+      - TELEGRAM_SESSION=${TELEGRAM_SESSION}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - LLM_MODEL=${LLM_MODEL}
+      - LLM_API_KEY=${LLM_API_KEY}
+      - LLM_BASE_URL=${LLM_BASE_URL}
+      - DB_CREDENTIALS=${DB_CREDENTIALS}
+      - PROD_SERVERS=${PROD_SERVERS}
+      - CLOUDFLARE_API_KEY=${CLOUDFLARE_API_KEY}
+      - CLOUDFLARE_ACCOUNT_ID=${CLOUDFLARE_ACCOUNT_ID}
+      - USDC_CONTRACT=${USDC_CONTRACT}
+      - SANDBOX_ENABLED=${SANDBOX_ENABLED:-false}
+      - MAX_EXECUTION_TIME=${MAX_EXECUTION_TIME:-300}
+      - ALLOWED_EGRESS=${ALLOWED_EGRESS:-'["*"]'}
+    volumes:
+      - ./session:/app/session
+      - ./logs:/app/logs
+      - /var/run/docker.sock:/var/run/docker.sock
+    network_mode: host  # Full network access as requested
+    privileged: true  # Full system access as requested
+    cap_add:
+      - ALL  # All capabilities as requested
+
+  # Optional: Local LLM (Qwen 2.5)
+  llm:
+    image: ghcr.io/astronomer/qwen2.5-72b-instruct:latest
+    container_name: local-llm
+    restart: unless-stopped
+    volumes:
+      - ./models:/models
+    ports:
+      - "11434:11434"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
