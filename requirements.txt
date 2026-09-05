@@ -1,0 +1,24 @@
+# Core
+aiohttp>=3.9.0
+asyncio>=3.4.3
+
+# Telegram
+pyrogram>=2.0.0
+tgcrypto>=1.2.5
+
+# LLM
+openai>=1.12.0
+
+# Database
+asyncpg>=0.29.0
+aiomysql>=0.2.0
+motor>=3.3.0
+
+# Docker & Execution
+docker>=7.0.0
+
+# Cloudflare
+cloudflare>=2.11.0
+
+# Utilities
+python-dotenv>=1.0.0
